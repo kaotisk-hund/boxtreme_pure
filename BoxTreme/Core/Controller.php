@@ -91,16 +91,11 @@ class Controller extends Generic{
         if($this->requests != NULL){
             foreach ($this->requests as $key => $value) {
                 $classname = strtolower($this->classFinder($key));
-                
-                        $to_run = ''
-                            . 'global $'.$classname.';'
-                            . 'if($'.  $classname.' != null){'
-                                . '$' . $classname . '->signal(\'' . $key . '\',$this->data);'
-                            . '} else {'
-                                . '$' . $classname . '= new ' . $this->classFinder($key) . '();'
-                                . '$' . $classname . '->signal(\'' . $key . '\',$this->data);'
-                            . '}';
-                    eval($to_run);
+                global $$classname;
+                if($$classname == null) {
+                    $$classname = new $this->classFinder($key);
+                }
+                $$classname->signal($key, $this->data);
             }
         } else {
             global $bxtreme;
